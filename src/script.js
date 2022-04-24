@@ -255,6 +255,8 @@ export default class Setup {
     
     this.addGrid()
 
+    this.setupControls()
+
     // this.addFog()
 
     // this.addGodRays()
@@ -264,6 +266,20 @@ export default class Setup {
     // Setup long press logic
     this.setupLongPressLogic()
     // this.tick()
+  }
+
+  setupControls() {
+    var self = this
+    this.sliderSpeed = document.querySelector('#sliderSpeed')
+    this.sliderSpeed.addEventListener('input', e => {
+      console.log('changing')
+      let target = e.target
+      
+      console.log('target')
+      console.log(typeof target.value)
+
+      self.mixer.timeScale = parseFloat( target.value )
+    })
   }
 
   addGrid() {
@@ -390,7 +406,10 @@ export default class Setup {
     var self = this
     // model
     const loader = new FBXLoader();
-    const fileName = 'walking-hopelessly_1b_after_MIXAMO_98U.fbx'
+    
+    // const fileName = 'walking-hopelessly_1b_after_MIXAMO_98U.fbx'
+    const fileName = 'troll-throwing-tree_DEFAULT_98U.fbx'
+
     // loader.load('models/fbx/Samba Dancing.fbx', function (object) {
     loader.load(fileName, function (object) {
 
