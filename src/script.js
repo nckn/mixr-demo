@@ -5,8 +5,8 @@ import { TweenMax, TimelineMax, Sine, Power3, Power4, Expo } from 'gsap'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 
-// import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js'
-import { BVHLoader } from 'three/examples/jsm/loaders/BVHLoader.js'
+import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js'
+// import { BVHLoader } from 'three/examples/jsm/loaders/BVHLoader.js'
 
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js'
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js'
@@ -238,6 +238,7 @@ export default class Setup {
     // this.setupNecessaryAudio()
 
     this.loadModel()
+
     this.loadModelFBX()
 
     this.addLights()
@@ -320,7 +321,19 @@ export default class Setup {
     // Make clock
     clock = new THREE.Clock()
 
-    // this.animatedCharacters.push(self.characterCapGuy)
+    // self.characterStudioNewton = new AnimatedChar({
+    //   scene,
+    //   camera,
+    //   // loader: this.gltfLoader,
+    //   loader: gltfLoader,
+    //   // modelPath: 'models/character_male_nielskonrad_rigged_with_anim_typing.glb',
+    //   modelPath: 'models/mixr-demo-1a.glb',
+    //   modelTexturePath: '',
+    //   charName: 'nielskonrad',
+    //   customMaterial: this.portalLightMaterial
+    // })
+
+    this.animatedCharacters.push(self.characterStudioNewton)
 
     window.addEventListener('resize', this.onResize)
   }
@@ -366,56 +379,56 @@ export default class Setup {
   loadModelFBX() {
     var self = this
     // model
-    // const loader = new FBXLoader();
-    // const fileName = 'walking-hopelessly_1b_after_MIXAMO_98U.fbx'
-    // // loader.load('models/fbx/Samba Dancing.fbx', function (object) {
-    // loader.load(fileName, function (object) {
+    const loader = new FBXLoader();
+    const fileName = 'walking-hopelessly_1b_after_MIXAMO_98U.fbx'
+    // loader.load('models/fbx/Samba Dancing.fbx', function (object) {
+    loader.load(fileName, function (object) {
 
-    //   self.mixer = new THREE.AnimationMixer(object);
-    //   // self.mixer.timeScale = 2
+      self.mixer = new THREE.AnimationMixer(object);
+      // self.mixer.timeScale = 2
 
-    //   const action = self.mixer.clipAction(object.animations[0]);
-    //   action.play();
+      const action = self.mixer.clipAction(object.animations[0]);
+      action.play();
 
-    //   object.traverse(function (child) {
+      object.traverse(function (child) {
 
-    //     if (child.isMesh) {
+        if (child.isMesh) {
 
-    //       // child.material = materialGreyStandard
+          // child.material = materialGreyStandard
 
-    //       child.castShadow = true;
-    //       child.receiveShadow = true;
+          child.castShadow = true;
+          child.receiveShadow = true;
 
-    //     }
+        }
 
-    //   });
+      });
 
-    //   // const sF = 0.1
+      const sF = 0.01
 
-    //   // object.scale.set( sF, sF, sF )
+      object.scale.set( sF, sF, sF )
 
-    //   scene.add(object);
+      scene.add(object);
 
-    // })
+    })
 
-    const loader = new BVHLoader();
-    const fileName = 'walking-hopelessly_1b_after_MIXAMO_98U.bvh'
-    loader.load( fileName, function ( result ) {
+    // const loader = new BVHLoader();
+    // const fileName = 'walking-hopelessly_1b_after_MIXAMO_98U.bvh'
+    // loader.load( fileName, function ( result ) {
 
-      skeletonHelper = new THREE.SkeletonHelper( result.skeleton.bones[ 0 ] );
-      skeletonHelper.skeleton = result.skeleton; // allow animation mixer to bind to THREE.SkeletonHelper directly
+    //   // skeletonHelper = new THREE.SkeletonHelper( result.skeleton.bones[ 0 ] );
+    //   // skeletonHelper.skeleton = result.skeleton; // allow animation mixer to bind to THREE.SkeletonHelper directly
 
-      const boneContainer = new THREE.Group();
-      boneContainer.add( result.skeleton.bones[ 0 ] );
+    //   const boneContainer = new THREE.Group();
+    //   boneContainer.add( result.skeleton.bones[ 0 ] );
 
-      scene.add( skeletonHelper );
-      scene.add( boneContainer );
+    //   scene.add( skeletonHelper );
+    //   scene.add( boneContainer );
 
-      // play animation
-      self.mixer = new THREE.AnimationMixer( skeletonHelper );
-      self.mixer.clipAction( result.clip ).setEffectiveWeight( 1.0 ).play();
+    //   // play animation
+    //   self.mixer = new THREE.AnimationMixer( skeletonHelper );
+    //   self.mixer.clipAction( result.clip ).setEffectiveWeight( 1.0 ).play();
 
-    } )
+    // } )
 }
 
   loadModel() {
@@ -434,8 +447,10 @@ export default class Setup {
       (gltf) => {
         // Bruno Simons 'portal.blend' model
         gltf.scene.traverse(child => {
-          console.log(child)
-          // console.log(child.name)
+          
+          // console.log(child)
+          console.log(child.name)
+
           // child.material = bakedFloorMaterial
           // Add each child to the meshes array
           this.meshes.push(child)
@@ -448,6 +463,14 @@ export default class Setup {
           ) {
             child.material = bakedFloorMaterial
             child.receiveShadow = true
+          }
+          
+          // Floor
+          if (
+            child.name === 'pac_man_machine' ||
+            child.name === 'cap'
+          ) {
+            child.visible = false
           }
        
         })
@@ -712,7 +735,7 @@ export default class Setup {
 
   tickTock() {
     var self = this
-    const elapsedTime = clock.getElapsedTime()
+    // const elapsedTime = clock.getElapsedTime()
 
     // let noise = self.simplex.noise3D(x / 160, x / 160, self.tT/mouseY) * fx1 + fx2;
     // TODO Implenting noise and need to use it for something
@@ -721,7 +744,7 @@ export default class Setup {
     // console.log(noise)
 
     // Update materials
-    portalLightMaterial.uniforms.uTime.value = elapsedTime
+    // portalLightMaterial.uniforms.uTime.value = elapsedTime
 
     // Set intensity based on sound volume - start
     self.allSounds.forEach((sound, index) => {
@@ -1014,7 +1037,7 @@ export default class Setup {
     // Set max polar angle
     // controls.maxPolarAngle = (Math.PI * 0.5) * 0.99
     controls.minDistance = 6
-    controls.maxDistance = 100
+    // controls.maxDistance = 100
 
     controls.addEventListener('change', _ => {
       // console.log('camera pos')
