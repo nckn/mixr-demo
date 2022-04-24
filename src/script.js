@@ -11,6 +11,13 @@ import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js'
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js'
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js'
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js'
+
+// import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
+// import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
+import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
+// import { CopyShader } from 'three/examples/jsm/shaders/CopyShader.js';
+import { FXAAShader } from 'three/examples/jsm/shaders/FXAAShader.js';
+
 // import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js'
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass'
 // Misc helper functions
@@ -588,12 +595,15 @@ export default class Setup {
     renderTarget = new RenderTargetClass(
       800,
       600, {
-      minFilter: THREE.LinearFilter,
-      magFilter: THREE.LinearFilter,
-      format: THREE.RGBAFormat,
-      encoding: THREE.sRGBEncoding
-    }
+        minFilter: THREE.LinearFilter,
+        magFilter: THREE.LinearFilter,
+        format: THREE.RGBAFormat,
+        encoding: THREE.sRGBEncoding
+      }
     )
+
+    // FXAA to avoid pixelated
+    let fxaaPass = new ShaderPass( FXAAShader );
 
     // Effect composer
     effectComposer = new EffectComposer(renderer, renderTarget)
@@ -603,6 +613,11 @@ export default class Setup {
     // Render pass
     const renderPass = new RenderPass(scene, camera)
     effectComposer.addPass(renderPass)
+    
+    // FXAA shader
+    effectComposer.addPass( fxaaPass )
+
+
     // Antialias pass
     if (renderer.getPixelRatio() === 1 && !renderer.capabilities.isWebGL2) {
       const smaaPass = new SMAAPass()
