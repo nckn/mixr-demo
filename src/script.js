@@ -5,7 +5,8 @@ import { TweenMax, TimelineMax, Sine, Power3, Power4, Expo } from 'gsap'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 
-import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js'
+// import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js'
+import { BVHLoader } from 'three/examples/jsm/loaders/BVHLoader.js'
 
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js'
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js'
@@ -365,38 +366,57 @@ export default class Setup {
   loadModelFBX() {
     var self = this
     // model
-    const loader = new FBXLoader();
-    const fileName = 'walking-hopelessly_1b_after_MIXAMO_98U.fbx'
-    // loader.load('models/fbx/Samba Dancing.fbx', function (object) {
-    loader.load(fileName, function (object) {
+    // const loader = new FBXLoader();
+    // const fileName = 'walking-hopelessly_1b_after_MIXAMO_98U.fbx'
+    // // loader.load('models/fbx/Samba Dancing.fbx', function (object) {
+    // loader.load(fileName, function (object) {
 
-      self.mixer = new THREE.AnimationMixer(object);
-      // self.mixer.timeScale = 2
+    //   self.mixer = new THREE.AnimationMixer(object);
+    //   // self.mixer.timeScale = 2
 
-      const action = self.mixer.clipAction(object.animations[0]);
-      action.play();
+    //   const action = self.mixer.clipAction(object.animations[0]);
+    //   action.play();
 
-      object.traverse(function (child) {
+    //   object.traverse(function (child) {
 
-        if (child.isMesh) {
+    //     if (child.isMesh) {
 
-          // child.material = materialGreyStandard
+    //       // child.material = materialGreyStandard
 
-          child.castShadow = true;
-          child.receiveShadow = true;
+    //       child.castShadow = true;
+    //       child.receiveShadow = true;
 
-        }
+    //     }
 
-      });
+    //   });
 
-      // const sF = 0.1
+    //   // const sF = 0.1
 
-      // object.scale.set( sF, sF, sF )
+    //   // object.scale.set( sF, sF, sF )
 
-      scene.add(object);
+    //   scene.add(object);
 
-    })
-  }
+    // })
+
+    const loader = new BVHLoader();
+    const fileName = 'walking-hopelessly_1b_after_MIXAMO_98U.bvh'
+    loader.load( fileName, function ( result ) {
+
+      skeletonHelper = new THREE.SkeletonHelper( result.skeleton.bones[ 0 ] );
+      skeletonHelper.skeleton = result.skeleton; // allow animation mixer to bind to THREE.SkeletonHelper directly
+
+      const boneContainer = new THREE.Group();
+      boneContainer.add( result.skeleton.bones[ 0 ] );
+
+      scene.add( skeletonHelper );
+      scene.add( boneContainer );
+
+      // play animation
+      self.mixer = new THREE.AnimationMixer( skeletonHelper );
+      self.mixer.clipAction( result.clip ).setEffectiveWeight( 1.0 ).play();
+
+    } )
+}
 
   loadModel() {
     var self = this
