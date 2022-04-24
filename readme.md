@@ -1,5 +1,4 @@
-# Captcha
-# Three.js Journey
+# MiXR Demo
 
 ## Setup
 Download [Node.js](https://nodejs.org/en/download/).
@@ -19,7 +18,7 @@ npm run build
 TODO
 - add shader from ex. 35
 - tv shader w/ post-processing lines (type)
-- 
+- add godrays: https://github.com/mrdoob/three.js/blob/master/examples/webgl_postprocessing_godrays.html
 
 Video clip from Old TV time
 https://www.youtube.com/channel/UCUj8lkSnX-BnTXBYj8kwvsQ

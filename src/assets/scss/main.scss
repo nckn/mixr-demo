@@ -117,6 +117,10 @@ $popover-h: 124px;
   width: 230px;
 }
 
+.annotation__title__text {
+  overflow: hidden;
+}
+
 .annotation__title,
 .annotation__subtitle {
   overflow-x: visible;

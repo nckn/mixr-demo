@@ -12,6 +12,9 @@ import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js'
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js'
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js'
 
+import { LuminosityShader } from 'three/examples/jsm/shaders/LuminosityShader.js';
+import { SobelOperatorShader } from 'three/examples/jsm/shaders/SobelOperatorShader.js';
+
 // import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
 // import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
@@ -242,7 +245,7 @@ export default class Setup {
     this.setupTweakGui() // Secondly lets setup tweak gui
     this.init()
     // this.setupMovie()
-    // this.setupNecessaryAudio()
+    this.setupNecessaryAudio()
 
     this.loadModel()
 
@@ -415,6 +418,8 @@ export default class Setup {
       object.scale.set( sF, sF, sF )
 
       scene.add(object);
+
+      self.loadSound( 1, object )
 
     })
 
@@ -617,6 +622,19 @@ export default class Setup {
     // FXAA shader
     effectComposer.addPass( fxaaPass )
 
+    const effectGrayScale = new ShaderPass( LuminosityShader );
+    effectComposer.addPass( effectGrayScale );
+
+    // you might want to use a gaussian blur filter before
+    // the next pass to improve the result of the Sobel operator
+
+    // Sobel operator
+
+    let effectSobel = new ShaderPass( SobelOperatorShader );
+    effectSobel.uniforms[ 'resolution' ].value.x = window.innerWidth * window.devicePixelRatio;
+    effectSobel.uniforms[ 'resolution' ].value.y = window.innerHeight * window.devicePixelRatio;
+    effectComposer.addPass( effectSobel );
+
 
     // Antialias pass
     if (renderer.getPixelRatio() === 1 && !renderer.capabilities.isWebGL2) {
@@ -632,7 +650,7 @@ export default class Setup {
     effectComposer.addPass(unrealBloomPass)
 
     // unrealBloomPass.strength = 0.622
-    unrealBloomPass.strength = 0.2
+    unrealBloomPass.strength = 0.8
     // unrealBloomPass.radius = 1
     unrealBloomPass.radius = 0.1
     unrealBloomPass.threshold = 0.6
