@@ -231,7 +231,7 @@ input[type=range]::-moz-range-track {
 
 $thumb-size-sm: 20px;
 $thumb-size-lg: 14px;
-$slider-width: 250px;
+$slider-width: 150px;
 
 input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
@@ -276,10 +276,52 @@ input[type=range]:focus::-moz-range-track {
   background: #ccc;
 }
 
-#sliderSpeed {
-  width: $slider-width;
+
+
+.slider-wrapper {
+  width: 100%;
   position: absolute;
-  left: calc(50% - #{$slider-width / 2});
-  bottom: 80px;
+  left: 0;
+  bottom: 0;
+  height: 64px;
+  display: flex;
+  padding: 20px 40px;
+  grid-column-gap: 20px;
+  // background: #151515;
+}
+.slider {
+  width: $slider-width !important;
+  // position: absolute;
+  // bottom: 80px;
+  position: relative;
+  &:before {
+    content: '';
+    position: absolute;
+    top: -24px;
+    font-size: 10px;
+    color: #656565;
+    left: 0;
+  }
+}
+
+#sliderSpeed {
+  &:before {
+    content: 'Speed';
+  }
+  // left: calc(50% - #{$slider-width / 2});
+}
+
+#sliderScanlines {
+  &:before {
+    content: 'Video lines';
+  }
+  // left: 30px;
+}
+
+#sliderScanlinesTwo {
+  &:before {
+    content: 'Video noise';
+  }
+  // left: 30px;
 }
 // Slider - end

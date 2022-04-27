@@ -283,6 +283,28 @@ export default class Setup {
 
       self.mixer.timeScale = parseFloat( target.value )
     })
+    
+    // Filmpass sIntensity
+    this.sliderScanlines = document.querySelector('#sliderScanlines')
+    this.sliderScanlines.addEventListener('input', e => {
+      console.log('changing')
+      let target = e.target
+      
+      // console.log('target')
+      // console.log(typeof target.value)
+      self.filmPass.uniforms.sIntensity.value = parseFloat( target.value )
+    })
+    
+    // Filmpass nIntensity
+    this.sliderScanlinesTwo = document.querySelector('#sliderScanlinesTwo')
+    this.sliderScanlinesTwo.addEventListener('input', e => {
+      console.log('changing')
+      let target = e.target
+      
+      // console.log('target')
+      // console.log(typeof target.value)
+      self.filmPass.uniforms.nIntensity.value = parseFloat( target.value )
+    })
   }
 
   addGrid() {
