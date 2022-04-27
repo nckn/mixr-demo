@@ -47,3 +47,32 @@ Questions
 957 - // ?? WHere do we detect an object with raycaster?
 957 - // self.intersectedObject = self.intS
 
+
+```
+import { FilmPass } from 'three/examples/jsm/postprocessing/FilmPass.js';
+
+// Passes
+filmPass: null,
+
+self.filmPass = new FilmPass(
+  0.35,   // noise intensity
+  0.025,  // scanline intensity
+  648,    // scanline count
+  false,  // grayscale
+);
+self.filmPass.renderToScreen = true;
+self.composer.addPass(self.filmPass);
+
+
+
+
+else if (ob.name === 'Scan lines') {
+  console.log('scan lines: ', self.filmPass.uniforms.sIntensity)
+  self.filmPass.uniforms.sIntensity.value = ob.value
+  // self.refreshText()
+}
+else if (ob.name === 'Noise intensity') {
+  console.log('scan lines: ', self.filmPass.uniforms.sIntensity)
+  self.filmPass.uniforms.nIntensity.value = ob.value 
+}
+```
