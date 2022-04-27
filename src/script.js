@@ -11,6 +11,7 @@ import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js'
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js'
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js'
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js'
+import { FilmPass } from 'three/examples/jsm/postprocessing/FilmPass.js'
 
 import { LuminosityShader } from 'three/examples/jsm/shaders/LuminosityShader.js';
 import { SobelOperatorShader } from 'three/examples/jsm/shaders/SobelOperatorShader.js';
@@ -231,6 +232,8 @@ export default class Setup {
     this.allSounds = []
 
     this.mixer = null
+
+    this.filmPass = null
 
     this.masterInit()
 
@@ -637,6 +640,15 @@ export default class Setup {
     // Render pass
     const renderPass = new RenderPass(scene, camera)
     effectComposer.addPass(renderPass)
+
+    self.filmPass = new FilmPass(
+      0.35,   // noise intensity
+      0.025,  // scanline intensity
+      648,    // scanline count
+      false,  // grayscale
+    )
+    self.filmPass.renderToScreen = true
+    effectComposer.addPass(self.filmPass)
     
     // FXAA shader
     effectComposer.addPass( fxaaPass )
@@ -1088,7 +1100,7 @@ export default class Setup {
     // controls.enablePan = false
     // Set max polar angle
     // controls.maxPolarAngle = (Math.PI * 0.5) * 0.99
-    controls.minDistance = 6
+    controls.minDistance = 2
     // controls.maxDistance = 100
 
     controls.addEventListener('change', _ => {
